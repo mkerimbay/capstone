@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lisa</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .chat-container {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        .chat-message {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Lisa-Stock Market Agent</h1>
+        <div class="chat-container" id="chat-container">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <input type="text" id="user-input" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+    <script>
+        function displayMessage(sender, message) {
+            var chatContainer = document.getElementById('chat-container');
+            var messageElement = document.createElement('div');
+            messageElement.textContent = sender + ': ' + message;
+            chatContainer.appendChild(messageElement);
+        }
+
+        function sendMessage() {
+            var userInput = document.getElementById('user-input').value;
+            displayMessage('User', userInput);
+
+            // Send user input to the server for processing
+            fetch('/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: userInput })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var botResponse = data.response;
+                displayMessage('Bot', botResponse);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                displayMessage('Bot', 'Sorry, an error occurred. Please try again.');
+            });
+
+            // Clear the user input field
+            document.getElementById('user-input').value = '';
+        }
+    </script>
+</body>
+</html>
